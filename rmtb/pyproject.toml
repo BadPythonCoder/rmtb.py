@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "rmtb"
-version = "0.1.0"
+version = "0.1.1"
 description = "A simple library for making rmtb bots in python."
 authors = ["Your Name <you@example.com>"]
 
