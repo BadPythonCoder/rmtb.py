@@ -8,6 +8,8 @@ class Bot:
 	sid = None
 	HEARTBEAT = 0
 	ws = None
+	currroom = None
+	rooms = []
 	def __init__(self, name, color, bot=True):
 		self.name = name
 		self.color = color
@@ -18,6 +20,13 @@ class Bot:
 			ws.send("2")
 	def event(self, func):
 		self.events[func.__name__] = func
+	# def _room_current_resp(self, d):
+	# 	self.currroom = d[1]
+	# def _room_list_resp(self, d):
+	# 	self.rooms = d[1]
+	# def _room_update(self):
+	# 	self.request_rooms()
+	# 	self.request_current_room()
 	def _message(self, ws, msg):
 		if msg == "3probe":
 			ws.send("5")
@@ -40,8 +49,26 @@ class Bot:
 					# print(str(e))
 					pass
 			else:
-				ev = converter.e2f[data[0]]
-				self.events[ev](data[1])
+				# adj = eval(data[0])
+				if data[0] == "room_update":
+					self.request_current_room()
+					self.request_rooms()
+				if not "resp" in data[0]:
+					if data[0] == "room_current_resp":
+						self.curroom = data[2]
+					elif data[0] == "room_list_resp":
+						self.rooms = data[2]
+				# 	return
+				try:
+					ev = converter.e2f[data[0]]
+					# print(converter.e2f[data[0]])
+					# print(self.events[ev])
+					# print(ev=="message")
+					# print(self.events[ev]==self.events["message"])
+					self.events[ev](data[1])
+				except Exception as e:
+					# print(str(e))
+					pass
 	def _error(self, ws, err):
 		pass
 	def _close(self, ws, status, msg):
